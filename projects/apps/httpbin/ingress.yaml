@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1 
+kind: Ingress 
+metadata:
+  name: httpbin
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+    kubernetes.io/ingress.class: kommander-traefik
+    cert-manager.io/duration: 2160h # 90 days
+    cert-manager.io/renew-before: 360h # 15 days
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: kommander-traefik
+  rules:
+  - host: httpbin.10.38.207.151.nip.io
+    http: 
+      paths:
+      - backend:
+          service:
+            name: httpbin
+            port:
+              number: 8000
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - httpbin.192.168.1.30.nip.io
+    secretName: wildcard-tls
